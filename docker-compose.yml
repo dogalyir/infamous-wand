@@ -1,0 +1,23 @@
+services:
+  cliproxy:
+    build:
+      context: .
+      args:
+        CLIPROXY_VERSION: ${CLIPROXY_VERSION:-0.4.0}
+    image: cliproxy-rs:${CLIPROXY_VERSION:-0.4.0}
+    container_name: cliproxy
+    restart: unless-stopped
+    environment:
+      # Solo se usan en el primer arranque, para generar config.yaml
+      CLIPROXY_CLIENT_KEY: ${CLIPROXY_CLIENT_KEY:-}
+      CLIPROXY_MANAGEMENT_KEY: ${CLIPROXY_MANAGEMENT_KEY:-}
+      RUST_LOG: ${RUST_LOG:-info}
+      TZ: ${TZ:-America/Bogota}
+    ports:
+      # Solo localhost del host; usa "8317:8317" para exponerlo a la red
+      - "127.0.0.1:${CLIPROXY_PORT:-8317}:8317"
+    volumes:
+      - cliproxy_data:/data
+
+volumes:
+  cliproxy_data:
